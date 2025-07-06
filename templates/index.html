@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trợ lý AI Voice</title>
+  <style>
+    body { font-family: Arial; margin: 40px; background-color: #f9f9f9; }
+    #chatbox { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; background: white; }
+    .message { margin: 5px 0; }
+    .user { color: blue; }
+    .bot { color: green; }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Trợ lý AI – Giao tiếp bằng giọng nói</h1>
+  <div id="chatbox"></div>
+  <button onclick="startListening()">🎤 Nói</button>
+
+  <script>
+    const chatbox = document.getElementById("chatbox");
+
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = "message " + sender;
+      div.textContent = sender === "user" ? "Bạn: " + text : "🤖 AI: " + text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "vi-VN";
+      synth.speak(utter);
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "vi-VN";
+      recognition.start();
+
+      recognition.onresult = async function(event) {
+        const message = event.results[0][0].transcript;
+        addMessage(message, "user");
+
+        const response = await fetch("/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        addMessage(data.reply, "bot");
+        speak(data.reply);
+      };
+
+      recognition.onerror = function(event) {
+        alert("Lỗi microphone hoặc không nghe thấy gì. Vui lòng thử lại!");
+      };
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Flask
+Flask_SQLAlchemy
+openai
+gtts
+speechrecognition
+playsound
