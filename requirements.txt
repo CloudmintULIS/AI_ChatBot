@@ -4,3 +4,4 @@ openai
 gtts
 speechrecognition
 # playsound
+gunicorn
