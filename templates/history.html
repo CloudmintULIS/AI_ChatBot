@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Lịch sử trò chuyện</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      padding: 40px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .msg {
+      background: #fff;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .user { color: #2980b9; font-weight: bold; }
+    .bot { color: #27ae60; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🕓 Lịch sử trò chuyện</h1>
+
+  {% for msg in messages %}
+    <div class="msg">
+      <div class="user">Bạn: {{ msg.user_message }}</div>
+      <div class="bot">🤖 Trợ lý: {{ msg.ai_response }}</div>
+    </div>
+  {% else %}
+    <p>Chưa có dữ liệu trò chuyện nào.</p>
+  {% endfor %}
+</body>
+</html>
