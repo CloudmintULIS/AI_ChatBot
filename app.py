@@ -54,6 +54,12 @@ def send():
 def history():
     messages = Message.query.all()
     return render_template("history.html", messages=messages)
+
+# ✅ Route cho cronjob giữ app hoạt động
+@app.route("/ping")
+def ping():
+    return "OK"
+
 with app.app_context():
     db.create_all()
 
