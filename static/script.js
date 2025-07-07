@@ -44,6 +44,13 @@ async function sendMessage() {
 
 // ✅ Ghi âm giọng nói bằng Web Speech API
 function startListening() {
+  const synth = window.speechSynthesis;
+
+  // ✅ Ngắt nói nếu đang nói
+  if (synth.speaking) {
+    synth.cancel();  // Dừng nói ngay
+  }
+
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = "vi-VN";
   recognition.start();
@@ -67,7 +74,7 @@ function startListening() {
 
       const data = await response.json();
       addMessage(data.reply, "bot");
-      speak(data.reply);
+      speak(data.reply);  // Nói lại phản hồi mới
     } catch (error) {
       addMessage("❌ Lỗi phản hồi từ server!", "bot");
     }
@@ -79,10 +86,10 @@ function startListening() {
   };
 
   recognition.onend = function() {
-    // ✅ Dù kết thúc bình thường vẫn tắt glowing
     document.querySelector(".mic-button").classList.remove("listening");
   };
 }
+
 
 // ✅ Gửi tin nhắn khi nhấn Enter
 document.getElementById("message-input").addEventListener("keydown", function(e) {
