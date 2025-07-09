@@ -44,9 +44,10 @@ def send():
 
     chat_history.append({"role": "assistant", "content": bot_reply})
 
-    new_msg = Message(user_message=user_message, ai_response=bot_reply)
-    db.session.add(new_msg)
-    db.session.commit()
+    # ❌ Tạm thời tắt ghi DB để test lỗi
+    # new_msg = Message(user_message=user_message, ai_response=bot_reply)
+    # db.session.add(new_msg)
+    # db.session.commit()
 
     return jsonify({"reply": bot_reply})
 
