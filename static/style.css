@@ -1,12 +1,13 @@
 body {
   margin: 0;
   font-family: 'Quicksand', sans-serif;
+  height: 100vh;
+  background: #f0f2f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
 body::before {
@@ -18,41 +19,44 @@ body::before {
   background: url("../static/images/Bg_1.jpg") no-repeat center center fixed;
   background-size: cover;
   background-attachment: fixed;
-  filter: brightness(0.6); /* hoặc blur(4px) nếu muốn làm mờ */
+  filter: brightness(0.6);
   z-index: -1;
 }
 
 .container {
-  background: #fff;
-  width: 100%;
+  width: 95%;
   max-width: 500px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-  overflow: hidden;
+  height: 90vh;
   display: flex;
   flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
+/* Header cố định chiều cao */
 header {
+  flex: 0 0 60px;
   background-color: #4b7bec;
   color: white;
-  padding: 20px;
   font-size: 20px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  line-height: 60px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Khung chat cuộn được */
 #chatbox {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 20px;
   overflow-y: auto;
   background: #f4f6f9;
-  border-left: 1px solid #e1e1e1;
-  border-right: 1px solid #e1e1e1;
   display: flex;
   flex-direction: column;
 }
 
+/* Tin nhắn */
 .message {
   margin: 10px 0;
   padding: 10px 14px;
@@ -62,11 +66,10 @@ header {
   font-size: 15px;
   animation: fadeInUp 0.3s ease;
 
-  white-space: pre-wrap;   /*  Cho phép xuống dòng khi dài */
-  word-wrap: break-word;   /*  Bẻ từ dài */
+  white-space: pre-wrap;
+  word-wrap: break-word;
   overflow-wrap: break-word;
 }
-
 
 @keyframes fadeInUp {
   from {
@@ -92,7 +95,9 @@ header {
   color: #2d3436;
 }
 
+/* Khung nhập tin nhắn */
 .controls {
+  flex: 0 0 60px;
   display: flex;
   padding: 10px 20px;
   background: #f1f1f1;
@@ -122,7 +127,9 @@ button:hover {
   background-color: #3867d6;
 }
 
+/* Nút micro */
 .mic-wrapper {
+  flex: 0 0 70px;
   text-align: center;
   padding: 10px 0 20px;
 }
