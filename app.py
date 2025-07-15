@@ -4,6 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
 import os
+import json
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat_history.db"
@@ -12,12 +13,16 @@ db.init_app(app)
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# ✅ Lấy ngày hệ thống và truyền vào AI
 today = datetime.now().strftime("%d/%m/%Y")
 chat_history = [
     {
         "role": "system",
-        "content": f"Hôm nay là {today}. Bạn là trợ lý AI thân thiện, trả lời ngắn gọn, súc tích, dễ hiểu."
+        "content": (
+            f"Hôm nay là {today}. Bạn là trợ lý AI thân thiện, trả lời ngắn gọn, súc tích, dễ hiểu. "
+            "Nếu người dùng yêu cầu mở YouTube (ví dụ: 'Mở YouTube bài Hãy trao cho anh'), "
+            "hãy trả về đúng JSON như sau: "
+            '{"action": "open_youtube", "query": "Hãy trao cho anh"}'
+        )
     }
 ]
 
@@ -44,10 +49,18 @@ def send():
 
     chat_history.append({"role": "assistant", "content": bot_reply})
 
-    # ❌ Tạm thời tắt ghi DB để test lỗi
+    # ❌ Tạm thời không ghi DB để tránh lỗi SQLite
     # new_msg = Message(user_message=user_message, ai_response=bot_reply)
     # db.session.add(new_msg)
     # db.session.commit()
+
+    # ✅ Nếu GPT trả về JSON (ví dụ: { "action": "open_youtube", ... }) thì gửi lại nguyên dạng
+    try:
+        parsed = json.loads(bot_reply)
+        if isinstance(parsed, dict) and "action" in parsed:
+            return jsonify(parsed)
+    except:
+        pass
 
     return jsonify({"reply": bot_reply})
 
@@ -56,7 +69,6 @@ def history():
     messages = Message.query.all()
     return render_template("history.html", messages=messages)
 
-# ✅ Route cho cronjob giữ app hoạt động
 @app.route("/ping")
 def ping():
     return "OK"
@@ -66,4 +78,3 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

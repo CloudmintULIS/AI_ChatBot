@@ -35,12 +35,22 @@ async function sendMessage() {
     });
 
     const data = await res.json();
-    addMessage(data.reply, "bot");
-    speak(data.reply);
+
+    // ✅ Nếu phản hồi là action mở YouTube
+    if (data.action === "open_youtube" && data.query) {
+      addMessage(`Đang mở YouTube với từ khóa: ${data.query}`, "bot");
+      speak(`Đang mở YouTube với từ khóa: ${data.query}`);
+      window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(data.query), "_blank");
+    } else {
+      addMessage(data.reply, "bot");
+      speak(data.reply);
+    }
+
   } catch (err) {
     addMessage("❌ Không kết nối được với server!", "bot");
   }
 }
+
 
 // ✅ Ghi âm giọng nói bằng Web Speech API
 function startListening() {
@@ -59,26 +69,32 @@ function startListening() {
   document.querySelector(".mic-button").classList.add("listening");
 
   recognition.onresult = async function(event) {
-    const message = event.results[0][0].transcript;
-    addMessage(message, "user");
+  const message = event.results[0][0].transcript;
+  addMessage(message, "user");
+  document.querySelector(".mic-button").classList.remove("listening");
+      try {
+        const response = await fetch("/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
 
-    // 🔴 Tắt hiệu ứng glowing
-    document.querySelector(".mic-button").classList.remove("listening");
+        const data = await response.json();
 
-    try {
-      const response = await fetch("/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
+        if (data.action === "open_youtube" && data.query) {
+          addMessage(`Đang mở YouTube với từ khóa: ${data.query}`, "bot");
+          speak(`Đang mở YouTube với từ khóa: ${data.query}`);
+          window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(data.query), "_blank");
+        } else {
+          addMessage(data.reply, "bot");
+          speak(data.reply);
+        }
 
-      const data = await response.json();
-      addMessage(data.reply, "bot");
-      speak(data.reply);  // Nói lại phản hồi mới
-    } catch (error) {
-      addMessage("❌ Lỗi phản hồi từ server!", "bot");
-    }
+      } catch (error) {
+        addMessage("❌ Lỗi phản hồi từ server!", "bot");
+      }
   };
+
 
   recognition.onerror = function() {
     alert("Không nghe thấy gì hoặc microphone bị lỗi. Vui lòng thử lại.");
