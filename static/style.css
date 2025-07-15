@@ -61,7 +61,12 @@ header {
   line-height: 1.4;
   font-size: 15px;
   animation: fadeInUp 0.3s ease;
+
+  white-space: pre-wrap;   /*  Cho phép xuống dòng khi dài */
+  word-wrap: break-word;   /*  Bẻ từ dài */
+  overflow-wrap: break-word;
 }
+
 
 @keyframes fadeInUp {
   from {
